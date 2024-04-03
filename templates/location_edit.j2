@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!-- Citation for the following file:
+Date: 02/29/2024
+Based on osu-cs340-ecampus/flask-starter-app/templates
+Used the bsg_people_app/templates/edit_people.j2 as a template for our location_edit.j2
+Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app/blob/master/bsg_people_app/templates/edit_people.j2 -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locations</title>
+    <link href={{ url_for('static', filename='css/style.css') }} rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <h1>Locations</h1>
+
+    <div id="browse" style="display: block">
+        <p><strong>Browse Locations</strong></p>
+        <table border="1" cellpadding="5">
+            <tr>
+                <th>ID</th>
+                <th>Address</th>
+                <th>Phone Number</th>
+            </tr>
+            {% for location in locations %}
+            <tr>
+                <td align="right">{{location['locationID']}}</td>
+                <td align="right">{{location['address']}}</td>
+                <td>{{location['phoneNumber']}}</td>
+            </tr>
+            {% endfor %}
+            
+        </table>
+
+        <p>&nbsp;</p>
+
+        <div id="update" style="display: block">
+        <form id="updateLocation" action="/edit_location/{{locations[0].locationID}}" method="post">
+            <legend><strong>Update Location</strong></legend>
+            <fieldset class="fields">
+                <label>ID:</label> {{locations[0].locationID}}
+                <label> Address </label> <input type="text" value="{{locations[0].address}}" name="address" id="address">
+                <label> Phone Number </label> <input type="tel" name="phoneNumber" value="{{locations[0].phoneNumber}}" id="phoneNumber">
+            </fieldset>
+            <input class="btn" type="submit" id="UpdateLocation" value="Save Update Location">
+            <a href="javascript:history. back()">
+                <input class="btn" type="button" value="cancel" onclick = "browseLocations()">
+            </a>
+        </form>
+    </div><!-- update -->
+    <p>&nbsp;</p>
+    </div> <!-- browse -->
+
+</body>
+
+</html>

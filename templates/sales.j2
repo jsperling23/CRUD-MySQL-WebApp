@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<!-- Citation for the following file:
+Date: 03/03/2024
+Based on osu-cs340-ecampus/flask-starter-app/templates
+Used the bsg_people_app/templates/people.j2 as a template for our products.j2
+Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app/blob/master/bsg_people_app/templates/people.j2 -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales</title>
+    <link href={{ url_for('static', filename='css/style.css') }} rel="stylesheet" type="text/css" />
+    <script language="JavaScript">
+        function showform(dowhat) {
+            /*
+             * four DIVS: browse, insert, update, delete
+             * this function sets one visible the others not
+             */
+            if(dowhat == 'insert') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'block';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'none';
+            } else if(dowhat == 'update') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'block';
+                document.getElementById('delete').style.display = 'none';
+            } else if(dowhat == 'delete') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'block';
+            } else if(dowhat == 'all') {
+                document.getElementById('browse').style.display = 'block';
+                document.getElementById('insert').style.display = 'block';
+                document.getElementById('update').style.display = 'block';
+                document.getElementById('delete').style.display = 'block';
+            } else { //by default display browse
+                document.getElementById('browse').style.display = 'block';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'none';
+            }
+        }
+    
+        function newSale() {
+            showform('insert');
+        }
+    
+        function updateSale(pid) {
+            showform('update');
+        }
+    
+        function deleteSale(pid) {
+            showform('delete');
+        }
+    
+        function browseSale() {
+            showform('browse');
+        }
+    
+        function showAll() {
+            showform('all');
+        };
+
+        function filterSales() {
+            let dropdown = document.getElementById('dropdown');
+            let table = document.getElementById('browseTable');
+            let rows = table.getElementsByTagName('tr');
+            let filter = dropdown.value
+            for (let i = 1; i < rows.length; i++ ) {
+                let row = rows[i]
+                let cells = row.getElementsByTagName('td');
+                let customerID = cells[3].innerHTML;
+                if (customerID === filter || filter === "0") {
+                    row.style.display = ''
+                } else {
+                    row.style.display = 'none'
+                }
+            }
+        };
+
+        </script>
+</head>
+</head>
+
+<body onload = "browseSale()">
+    <h1>Sales</h1>
+
+    <nav>
+        <a href="index">Homepage</a>
+        <a href="customers">Customers</a>
+        <a href="locations">Locations</a>
+        <a href="products">Products</a>
+        <a href="productsSales">ProductsSales</a>
+        <a href="sales">Sales</a>
+    </nav>
+
+    <div id="browse" style="display: block">
+        <p><strong>Browse Sales</strong></p>
+        <table border="1" cellpadding="5" id="browseTable">
+            <label for="dropdown">Filter by customer:</label> 
+                <select name="dropdown" id="dropdown" onchange="filterSales()">
+                    <option value="0" selected>&nbsp;</option>
+                    {% for customer in dropdown %}
+                    <option value="{{customer.name}}">{{customer.name}}</option>
+                    {% endfor %}
+                </select>
+            <tr>
+                <th><a href="#" onclick="newSale()">New</a></th>
+                <th></th>
+                <th>SaleID</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Location</th>
+            </tr>
+            {% for sale in sales %}
+            <tr>
+                <td><a href="/edit_sale/{{sale.saleID}}/{{sale.customerID}}&{{sale.locationID}}">Edit</a></td>
+                <td><a href="/delete_sale/{{sale.saleID}}" onclick="return confirm('Are you sure you want to delete the following location: {{sale.saleID}}');">Delete</a></td>
+                <td align="right">{{sale.saleID}}</td>
+                <td>{{sale.name}}</td>
+                <td align="right">{{sale.date}}</td>
+                <td>{{sale.address}}</td>
+            </tr>
+            {% endfor %}
+            
+        </table>
+            <p>Deleting a sale will delete any row in ProductsSales associated with that specific saleID </p>
+
+        <p>&nbsp;</p>
+    </div> <!-- browse -->
+    <div id="insert" style="display: block">
+        <form id="addSale" action="/sales" method="POST">
+            <legend><strong>Add Sales</strong></legend>
+            <fieldset class="fields">
+                <label for="dropdownCust">Customer</label> 
+                    <select name="dropdownCust" id="dropdownCust">
+                        {% for customer in customers %} 
+                        <option value="{{customer.customerID}}">{{customer.name}}</option>
+                        {% endfor %}
+                    </select>
+                <label> Date </label> <input type="date" name="date">
+                <label for="dropdownLoc">Location</label> 
+                    <select name="dropdownLoc" id="dropdownLoc">
+                        {% for location in locations %} 
+                        <option value="{{location.locationID}}">{{location.address}}</option>
+                        {% endfor %}
+                    </select>
+            </fieldset>
+            <input class="btn" type="submit" id="addSaleButton" name="addSale" value="Add a Sale">
+            <input class="btn" type="button" value="cancel" onclick="browseSale()">
+        </form> <!--add new sale-->
+    </div><!-- insert -->
+
+    <p>&nbsp;</p>
+    <div id="update" style="display: block">
+        <form id="updateSale">
+            <legend><strong>Update Sale</strong></legend>
+            <fieldset class="fields">
+                <label>SaleID:</label> 1
+                <label> Customer </label> <input type="text" value="Gerry Lopez" name="customer">
+                <label> Date </label> <input type="text" name="date" value="2024-05-01">
+                <label> Location </label> <input type="text" name="location" value="16th Street, Portland, OR, 92014">
+            </fieldset>
+            <input class="btn" type="submit" id="UpdateSaveSale" value="Save Update Sale">
+            <input class="btn" type="button" value="cancel">
+        </form>
+    </div><!-- update -->
+    <p>&nbsp;</p>
+    <div id="delete" style="display: block">
+        <form id="deleteSale">
+            <legend><strong>Delete Sale</strong></legend>
+            <fieldset class="fields">
+                <p>Are you sure you wish to delete the following?</p>
+                <label>ID:</label> 1
+                <label> Description </label> Skis
+
+            </fieldset>
+            <input class="btn" type="submit" id="DeleteSale" value="Delete Sale">
+            <input class="btn" type="button" value="cancel">
+        </form>
+    </div><!-- delete -->
+</body>
+
+</html>

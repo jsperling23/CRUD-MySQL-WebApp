@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<!-- Citation for the following file:
+Date: 02/29/2024
+Based on osu-cs340-ecampus/flask-starter-app/templates
+Used the bsg_people_app/templates/people.j2 as a template for our locations.j2
+Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app/blob/master/bsg_people_app/templates/people.j2 -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locations</title>
+    <link href={{ url_for('static', filename='css/style.css') }} rel="stylesheet" type="text/css" />
+    <script language="JavaScript">
+        function showform(dowhat) {
+            /*
+             * four DIVS: browse, insert, update, delete
+             * this function sets one visible the others not
+             */
+            if(dowhat == 'insert') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'block';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'none';
+            } else if(dowhat == 'update') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'block';
+                document.getElementById('delete').style.display = 'none';
+            } else if(dowhat == 'delete') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'block';
+            } else if(dowhat == 'all') {
+                document.getElementById('browse').style.display = 'block';
+                document.getElementById('insert').style.display = 'block';
+                document.getElementById('update').style.display = 'block';
+                document.getElementById('delete').style.display = 'block';
+            } else { //by default display browse
+                document.getElementById('browse').style.display = 'block';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'none';
+            }
+        }
+    
+        function newLocation() {
+            showform('insert');
+        }
+    
+        function updateLocation(pid) {
+            showform('update');
+        }
+    
+        function deleteLocation(pid) {
+            showform('delete');
+        }
+    
+        function browseLocations() {
+            showform('browse');
+        }
+    
+        function showAll() {
+            showform('all');
+        }
+        </script>
+</head>
+
+<body onload = "browseLocations()">
+    <h1>Locations</h1>
+
+    <nav>
+        <a href="/">Homepage</a>
+        <a href="customers">Customers</a>
+        <a href="locations">Locations</a>
+        <a href="products">Products</a>
+		<a href="productsSales">ProductsSales</a>
+        <a href="sales">Sales</a>
+    </nav>
+
+    <div id="browse" style="display: block">
+        <p><strong>Browse Locations</strong></p>
+        <table border="1" cellpadding="5">
+            <tr>
+                <th><a href="#" onclick = "newLocation()">New</a></th>
+                <th></th>
+                <th>ID</th>
+                <th>Address</th>
+                <th>Phone Number</th>
+            </tr>
+            {% for location in locations %}
+            <tr>
+                <td><a href="/edit_location/{{location.locationID}}" >Edit</a></td>
+                <td><a href="/delete_location/{{location.locationID}}" onclick="return confirm('Are you sure you want to delete the following location: {{location.address}}');">Delete</a></td>
+                <td align="right">{{location['locationID']}}</td>
+                <td align="right">{{location['address']}}</td>
+                <td>{{location['phoneNumber']}}</td>
+            </tr>
+            {% endfor %}
+            
+        </table>
+	        <p>Deleting a location will set any locationID foreign keys in the Sales entity to null </p>
+        <p>&nbsp;</p>
+    </div> <!-- browse -->
+
+    <div id="insert" style="display: block">
+        <form name="addLocation" id="addLocation" action="/locations" method="POST">
+            <legend><strong>Add Locations</strong></legend>
+            <fieldset class="fields">
+                <label> Address </label> <input type="text" name="address" id="address" required>
+                <label> Phone Number </label> <input type="tel" name="phoneNumber" id="phoneNumber" required>
+            </fieldset>
+            <input class="btn" type="submit" id="addLocationButton" name="addLocation" value="Add a Location">
+            <input class="btn" type="button" value="cancel" onclick = "browseLocations()">
+        </form>
+    </div><!-- insert -->
+
+    <p>&nbsp;</p>
+    <div id="update" style="display: block">
+        <form id="updateLocation">
+            <legend><strong>Update Location</strong></legend>
+            <fieldset class="fields">
+                <label>ID:</label> 1
+                <label> Address </label> <input type="text" value="16th Street, Portland, OR, 92014" name="address">
+                <label> Phone Number </label> <input type="tel" name="phoneNumber" value="1234567891">
+            </fieldset>
+            <input class="btn" type="submit" id="UpdateSaveLocation" value="Save Update Location" onclick = "browseLocations()">
+            <input class="btn" type="button" value="cancel" onclick = "browseLocations()">
+        </form>
+    </div><!-- update -->
+    <p>&nbsp;</p>
+    <div id="delete" style="display: block">
+        <form id="deleteLocation">
+            <legend><strong>Delete Location</strong></legend>
+            <fieldset class="fields">
+                <p>Are you sure you wish to delete the following?</p>
+                <label>ID:</label> 1
+                <label> Description </label> Skis
+
+            </fieldset>
+            <input class="btn" type="submit" id="DeleteLocation" value="Delete Location" onclick = "browseLocations()">
+            <input class="btn" type="button" value="cancel" onclick = "browseLocations()">
+        </form>
+    </div><!-- delete -->
+</body>
+
+</html>

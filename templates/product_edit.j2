@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<!-- Citation for the following file:
+Date: 02/29/2024
+Based on osu-cs340-ecampus/flask-starter-app/templates
+Used the bsg_people_app/templates/edit_people.j2 as a template for our product_edit.j2
+Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app/blob/master/bsg_people_app/templates/edit_people.j2 -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <link href={{ url_for('static', filename='css/style.css') }} rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <h1>Products</h1>
+
+    <div id="browse" style="display: block">
+        <p><strong>Browse Products</strong></p>
+        <table border="1" cellpadding="5">
+            <tr>
+                <th>ID</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Brand</th>
+            </tr>
+            {% for product in products %}
+            <tr>
+                <td align="right">{{product['productID']}}</td>
+                <td align="right">{{product['description']}}</td>
+                <td>{{product['price']}}</td>
+                <td>{{product['brand']}}</td>
+            </tr>
+            {% endfor %}
+
+        </table>
+
+        <p>&nbsp;</p>
+
+        <div id="update" style="display: block">
+            <form id="updateProduct" action="/edit_product/{{products[0].productID}}" method="post">
+                <legend><strong>Update Product</strong></legend>
+                <fieldset class="fields">
+                    <label>productID:</label> {{products[0].productID}} -
+                    <label> Description </label> <input type="text" value="{{products[0].description}}"
+                        name="description" id="description">
+                    <label> Price </label> <input type="text" name="price" value="{{products[0].price}}" id="price">
+                    <label> Brand </label> <input type="text" name="brand" value="{{products[0].brand}}" id="brand">
+                </fieldset>
+                <input class="btn" type="submit" id="UpdateProduct" value="Save Update Product">
+                <a href="javascript:history. back()">
+                    <input class="btn" type="button" value="cancel" onclick="browseProducts()">
+                </a>
+            </form>
+        </div><!-- update -->
+        <p>&nbsp;</p>
+    </div> <!-- browse -->
+
+</body>
+
+</html>

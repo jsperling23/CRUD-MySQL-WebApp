@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<!-- Citation for the following file:
+Date: 03/03/2024
+Based on osu-cs340-ecampus/flask-starter-app/templates
+Used the bsg_people_app/templates/people.j2 as a template for our productSales.j2
+Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app/blob/master/bsg_people_app/templates/people.j2 -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProductsSales</title>
+    <link href={{ url_for('static', filename='css/style.css') }} rel="stylesheet" type="text/css" />
+    <script language="JavaScript">
+        function showform(dowhat) {
+            /*
+             * four DIVS: browse, insert, update, delete
+             * this function sets one visible the others not
+             */
+            if (dowhat == 'insert') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'block';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'none';
+            } else if (dowhat == 'update') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'block';
+                document.getElementById('delete').style.display = 'none';
+            } else if (dowhat == 'delete') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'block';
+            } else if (dowhat == 'all') {
+                document.getElementById('browse').style.display = 'block';
+                document.getElementById('insert').style.display = 'block';
+                document.getElementById('update').style.display = 'block';
+                document.getElementById('delete').style.display = 'block';
+            } else { //by default display browse
+                document.getElementById('browse').style.display = 'block';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'none';
+            }
+        }
+
+        function newProductSale() {
+            showform('insert');
+        }
+
+        function updateProduct(pid) {
+            showform('update');
+        }
+
+        function deleteProduct(pid) {
+            showform('delete');
+        }
+
+        function browseProductsSales() {
+            showform('browse');
+        }
+
+        function showAll() {
+            showform('all');
+        }
+    </script>
+</head>
+
+<body onload="browseProductsSales()">
+    <h1>ProductsSales</h1>
+
+    <nav>
+        <a href="/">Homepage</a>
+        <a href="customers">Customers</a>
+        <a href="locations">Locations</a>
+        <a href="products">Products</a>
+        <a href="productsSales">ProductsSales</a>
+        <a href="sales">Sales</a>
+    </nav>
+
+    <div id="browse" style="display: block">
+        <p><strong>Browse ProductsSales</strong></p>
+        <p>This entity is a many-to-many relationship between the Products and Sales entities. It is used to describe what products were associated with each sale and in what quantity. </p>
+        <table border="1" cellpadding="5">
+            <tr>
+                <th><a href="#" onclick="newProductSale()">New</a></th>
+                <th></th>
+                <th>saleID</th>
+                <th>Product</th>
+                <th>quantity</th>
+            </tr>
+            {% for productSale in productsSales %}
+            <tr>
+                <td><a href="/edit_productSale/{{productSale.saleID}}/{{productSale.productID}}" >Edit</a></td>
+                <td><a href="/delete_productSale/{{productSale.saleID}}/{{productSale.productID}}"
+                        onclick="return confirm('Are you sure you want to delete the following productSale: {{productSale.saleID}}, {{productSale.description}}');">Delete</a>
+                </td>
+                <td align="right">{{productSale['saleID']}}</td>
+                <td align="right">{{productSale['description']}}</td>
+                <td align="right">{{productSale['quantity']}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <p>&nbsp;</p>
+    </div> <!-- browse -->
+
+    <div id="insert" style="display: block">
+        <form name="addProductSale" id="addProductSale" action="/productsSales" method="POST">
+            <legend><strong>Add ProductsSales</strong></legend>
+            <fieldset class="fields">
+                <label for="saleID">Sale ID:</label>
+                <select name="saleID">
+                    {% for sale in salesData %}
+                    <option value="{{ sale.saleID }}">{{ sale.saleID }}</option>
+                    {% endfor %}
+                </select>
+                <label for="productID">Product ID:</label>
+                <select name="productID">
+                    {% for product in productsData %}
+                    <option value="{{ product.productID }}">{{ product.description }}</option>
+                    {% endfor %}
+                </select>
+                <label> Quantity </label> <input type="text" name="quantity" id="quantity" required>
+            </fieldset>
+            <input class="btn" type="submit" id="addProductSaleButton" name="addProductSale" value="Add a ProductSale">
+            <input class="btn" type="button" value="cancel" onclick="browseProductsSales()">
+        </form>
+    </div><!-- insert -->
+
+    <p>&nbsp;</p>
+    <div id="update" style="display: block">
+        <form id="updateProductSale">
+            <legend><strong>Update ProductSale</strong></legend>
+            <fieldset class="fields">
+                <label>ID:</label> 1
+                <label> saleID </label> <input type="text" value="33" name="saleID">
+                <label> productID </label> <input type="text" value="5" name="productID">
+                <label> Quantity </label> <input type="text" value="6" name="quantity">
+
+            </fieldset>
+            <input class="btn" type="submit" id="UpdateSaveProductSale" value="Save Update ProductSale"
+                onclick="browseProductsSales()">
+            <input class="btn" type="button" value="cancel" onclick="browseProductsSales()">
+        </form>
+    </div><!-- update -->
+    <p>&nbsp;</p>
+    <div id="delete" style="display: block">
+        <form id="deleteProductSale">
+            <legend><strong>Delete ProductSale</strong></legend>
+            <fieldset class="fields">
+                <p>Are you sure you wish to delete the following?</p>
+                <label>ID:</label> 1
+                <label> Quantity </label> 7
+
+            </fieldset>
+            <input class="btn" type="submit" id="DeleteProductSale" value="Delete ProductSale"
+                onclick="browseProductsSales()">
+            <input class="btn" type="button" value="cancel" onclick="browseProductsSales()">
+        </form>
+    </div><!-- delete -->
+</body>
+
+</html>

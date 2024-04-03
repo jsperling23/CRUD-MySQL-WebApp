@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<!-- Citation for the following file:
+Date: 02/29/2024
+Based on osu-cs340-ecampus/flask-starter-app/templates
+Used the bsg_people_app/templates/edit_people.j2 as a template for our product_edit.j2
+Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app/blob/master/bsg_people_app/templates/edit_people.j2 -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <link href={{ url_for('static', filename='css/style.css') }} rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <h1>Sales</h1>
+
+    <div id="browse" style="display: block">
+        <p><strong>Browse Sale</strong></p>
+        <table border="1" cellpadding="5">
+            <tr>
+                <th>SaleID</th>
+                <th>CustomerID</th>
+                <th>Date</th>
+                <th>LocationID</th>
+            </tr>
+            {% for sale in sales %}
+            <tr>
+                <td align="right">{{sale.saleID}}</td>
+                <td>{{sale.customerID}}</td>
+                <td align="right">{{sale.date}}</td>
+                <td>{{sale.locationID}}</td>
+            </tr>
+            {% endfor %}
+
+        </table>
+
+        <p>&nbsp;</p>
+
+        <div id="update" style="display: block">
+            <form id="updateSale" action="/edit_sale/{{sales[0].saleID}}/{{sales[0].customerID}}&{{sales[0].locationID}}"
+                method="post">
+                <legend><strong>Update Sale</strong></legend>
+                <fieldset class="fields">
+                <label for="dropdownCust">Customer</label> 
+                    <select name="dropdownCust" id="dropdownCust">
+                        <option value = "{{sales[0].customerID}}" selected> {{sales[0].name}} </option>
+                        {% for customer in customers %} 
+                        <option value="{{customer.customerID}}">{{customer.name}}</option>
+                        {% endfor %}
+                    </select>
+                <label> Date </label> <input type="date" name="date" value = "{{sales[0].date}}">
+                <label for="dropdownLoc">Location</label> 
+                    <select name="dropdownLoc" id="dropdownLoc">
+                        <option value = "{{sales[0].locationID}}" selected> {{sales[0].address}} </option>
+                        {% for location in locations %} 
+                        <option value="{{location.locationID}}">{{location.address}}</option>
+                        {% endfor %}
+                    </select>
+            </fieldset>
+                <input class="btn" type="submit" id="Sale" value="Save Sale Update">
+                <a href="javascript:history. back()">
+                    <input class="btn" type="button" value="cancel" onclick="browseProductsSales()">
+                </a>
+            </form>
+        </div><!-- update -->
+        <p>&nbsp;</p>
+    </div> <!-- browse -->
+
+</body>
+
+</html>

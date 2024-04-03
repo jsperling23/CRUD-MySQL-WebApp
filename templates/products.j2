@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<!-- Citation for the following file:
+Date: 03/03/2024
+Based on osu-cs340-ecampus/flask-starter-app/templates
+Used the bsg_people_app/templates/people.j2 as a template for our products.j2
+Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app/blob/master/bsg_people_app/templates/people.j2 -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <link href={{ url_for('static', filename='css/style.css') }} rel="stylesheet" type="text/css" />
+    <script language="JavaScript">
+        function showform(dowhat) {
+            /*
+             * four DIVS: browse, insert, update, delete
+             * this function sets one visible the others not
+             */
+            if(dowhat == 'insert') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'block';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'none';
+            } else if(dowhat == 'update') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'block';
+                document.getElementById('delete').style.display = 'none';
+            } else if(dowhat == 'delete') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'block';
+            } else if(dowhat == 'all') {
+                document.getElementById('browse').style.display = 'block';
+                document.getElementById('insert').style.display = 'block';
+                document.getElementById('update').style.display = 'block';
+                document.getElementById('delete').style.display = 'block';
+            } else { //by default display browse
+                document.getElementById('browse').style.display = 'block';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'none';
+            }
+        }
+    
+        function newProduct() {
+            showform('insert');
+        }
+    
+        function updateProduct(pid) {
+            showform('update');
+        }
+    
+        function deleteProduct(pid) {
+            showform('delete');
+        }
+    
+        function browseProducts() {
+            showform('browse');
+        }
+    
+        function showAll() {
+            showform('all');
+        }
+        </script>
+</head>
+
+<body onload = "browseProducts()">
+    <h1>Products</h1>
+
+    <nav>
+        <a href="/">Homepage</a>
+        <a href="customers">Customers</a>
+        <a href="locations">Locations</a>
+        <a href="products">Products</a>
+        <a href="productsSales">ProductsSales</a>
+        <a href="sales">Sales</a>
+    </nav>
+
+    <div id="browse" style="display: block">
+        <p><strong>Browse Products</strong></p>
+        <table border="1" cellpadding="5">
+            <tr>
+                <th><a href="#" onclick = "newProduct()">New</a></th>
+                <th></th>
+                <th>ID</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Brand</th>
+            </tr>
+            {% for product in products %}
+            <tr>
+                <td><a href="/edit_product/{{product.productID}}" >Edit</a></td>
+                <td><a href="/delete_product/{{product.productID}}" onclick="return confirm('Are you sure you want to delete the following product: {{product.description}}');">Delete</a></td>
+                <td align="right">{{product['productID']}}</td>
+                <td align="right">{{product['description']}}</td>
+                <td align="right">{{product['price']}}</td>
+                <td align="right">{{product['brand']}}</td>
+            </tr>
+            {% endfor %}
+            
+        </table>
+        <p>Deleting a product will delete any row in ProductsSales associated with that specific productID </p>
+        <p>&nbsp;</p>
+    </div> <!-- browse -->
+
+    <div id="insert" style="display: block">
+        <form name="addProduct" id="addProduct" action="/products" method="POST">
+            <legend><strong>Add Products</strong></legend>
+            <fieldset class="fields">
+                <label> Description </label> <input type="text" name="description" id="description" required>
+                <label> Price </label> <input type="text" name="price" id="price" required>
+                <label> Brand </label> <input type="text" name="brand" id="brand" required>
+            </fieldset>
+            <input class="btn" type="submit" id="addProductButton" name="addProduct" value="Add a Product">
+            <input class="btn" type="button" value="cancel" onclick = "browseProducts()">
+        </form>
+    </div><!-- insert -->
+
+    <p>&nbsp;</p>
+    <div id="update" style="display: block">
+        <form id="updateProduct">
+            <legend><strong>Update Product</strong></legend>
+            <fieldset class="fields">
+                <label>ID:</label> 1
+                <label> Description </label> <input type="text" value="Burton cool pow snowboard v4" name="description">
+                <label> Price </label> <input type="text" name="price" value="600">
+                <label> Brand </label> <input type="text" name="brand" value="Burton">
+
+            </fieldset>
+            <input class="btn" type="submit" id="UpdateSaveProduct" value="Save Update Product" onclick = "browseProducts()">
+            <input class="btn" type="button" value="cancel" onclick = "browseProducts()">
+        </form>
+    </div><!-- update -->
+    <p>&nbsp;</p>
+    <div id="delete" style="display: block">
+        <form id="deleteProduct">
+            <legend><strong>Delete Product</strong></legend>
+            <fieldset class="fields">
+                <p>Are you sure you wish to delete the following?</p>
+                <label>ID:</label> 1
+                <label> Description </label> Skis
+
+            </fieldset>
+            <input class="btn" type="submit" id="DeleteProduct" value="Delete Product" onclick = "browseProducts()">
+            <input class="btn" type="button" value="cancel" onclick = "browseProducts()">
+        </form>
+    </div><!-- delete -->
+</body>
+
+</html>

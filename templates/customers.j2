@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<!-- Citation for the following file:
+Date: 03/03/2024
+Based on osu-cs340-ecampus/flask-starter-app/templates
+Used the bsg_people_app/templates/people.j2 as a template for our products.j2
+Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app/blob/master/bsg_people_app/templates/people.j2 -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customers</title>
+    <link href={{ url_for('static', filename='css/style.css') }} rel="stylesheet" type="text/css" />
+    <script language="JavaScript">
+        function showform(dowhat) {
+            /*
+             * four DIVS: browse, insert, update, delete
+             * this function sets one visible the others not
+             */
+            if(dowhat == 'insert') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'block';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'none';
+            } else if(dowhat == 'update') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'block';
+                document.getElementById('delete').style.display = 'none';
+            } else if(dowhat == 'delete') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'block';
+            } else if(dowhat == 'all') {
+                document.getElementById('browse').style.display = 'block';
+                document.getElementById('insert').style.display = 'block';
+                document.getElementById('update').style.display = 'block';
+                document.getElementById('delete').style.display = 'block';
+            } else { //by default display browse
+                document.getElementById('browse').style.display = 'block';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'none';
+            }
+        }
+    
+        function newCustomer() {
+            showform('insert');
+        }
+    
+        function updateCustomer(pid) {
+            showform('update');
+        }
+    
+        function deleteCustomer(pid) {
+            showform('delete');
+        }
+    
+        function browseCustomers() {
+            showform('browse');
+        }
+    
+        function showAll() {
+            showform('all');
+        }
+        </script>
+</head>
+
+<body onload = "browseCustomers()">
+    <h1>Customers</h1>
+
+    <nav>
+        <a href="index">Homepage</a>
+        <a href="customers">Customers</a>
+        <a href="locations">Locations</a>
+        <a href="products">Products</a>
+        <a href="productsSales">ProductsSales</a>
+        <a href="sales">Sales</a>
+    </nav>
+
+    <div id="browse" style="display: block">
+        <p><strong>Browse Customers</strong></p>
+        <table border="1" cellpadding="5">
+            <tr>
+                <th><a href="#" onclick = "newCustomer()">New</a></th>
+                <th></th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Address</th>
+            </tr>
+            {% for customer in customers %}
+            <tr>
+                <td><a href="/edit_customer/{{customer.customerID}}">Edit</a></td>
+                <td><a href="/delete_customer/{{customer.customerID}}" onclick="return confirm('Are you sure you want to delete the following customer: {{customer.name}}');">Delete</a></td>
+                <td align="right">{{customer.customerID}}</td>
+                <td>{{customer.name}}</td>
+                <td align="right">{{customer.email}}</td>
+                <td>{{customer.phoneNumber}}</td>
+                <td>{{customer.address}}</td>
+            </tr>
+            {% endfor %}
+            
+        </table>
+        <p>Deleting a customer will set any customerID foreign keys in the Sales entity to null </p>
+        <p>&nbsp;</p>
+    </div> <!-- browse -->
+    <div id="insert" style="display: block">
+        <form name="addCustomer" id="addCustomer" action="/customers" method="POST">
+            <legend><strong>Add Customers</strong></legend>
+            <fieldset class="fields">
+                <label> Name </label> <input type="text" name="name">
+                <label> Email </label> <input type="text" name="email">
+                <label> Phone Number </label> <input type="tel" name="phoneNumber">
+                <label> Address </label> <input type="text" name="address">
+            </fieldset>
+            <input class="btn" type="submit" id="addCustomerButton" name="addCustomer" value="Add a Customer">
+            <input class="btn" type="button" value="cancel" onclick = "browseCustomers()">
+        </form> <!--add new customer-->
+    </div><!-- insert -->
+
+    <p>&nbsp;</p>
+    <div id="update" style="display: block">
+        <form id="updateCustomer">
+            <legend><strong>Update Customer</strong></legend>
+            <fieldset class="fields">
+                <label>ID:</label> 1
+                <label> Name </label> <input type="text" value="Gerry Lopez" name="name">
+                <label> Email </label> <input type="text" name="email" value="gerry.shaka.brah@gmail.com">
+                <label> Phone Number </label> <input type="tel" name="phoneNumber" value="5556668121">
+                <label> Address </label> <input type="text" name="address" value="42 Wallaby Way, Syndey, Australia">
+
+            </fieldset>
+            <input class="btn" type="submit" id="UpdateSaveCustomer" value="Save Update Customer">
+            <input class="btn" type="button" value="cancel" onclick = "browseCustomers()">
+        </form>
+    </div><!-- update -->
+    <p>&nbsp;</p>
+    <div id="delete" style="display: block">
+        <form id="deleteCustomer">
+            <legend><strong>Delete Customer</strong></legend>
+            <fieldset class="fields">
+                <p>Are you sure you wish to delete the following?</p>
+                <label>ID:</label> 1
+                <label> Name </label> Gerry Lopez
+
+            </fieldset>
+            <input class="btn" type="submit" id="DeleteCustomer" value="Delete Customer">
+            <input class="btn" type="button" value="cancel">
+        </form>
+    </div><!-- delete -->
+</body>
+
+</html>
